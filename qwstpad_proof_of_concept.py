@@ -4,7 +4,7 @@ from machine import I2C
 from qwstpad import QwSTPad # type: ignore
 from qwstpad import DEFAULT_ADDRESS as ADDRESS # type: ignore
 
-pin = Pin("LEDW", Pin.OUT)
+pin = Pin("LED", Pin.OUT)
 i2c = I2C(id=0, scl=5, sda=4) 
 try:
     pad = QwSTPad(i2c, ADDRESS)
