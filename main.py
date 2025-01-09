@@ -4,7 +4,7 @@ import time
 from machine import I2C
 from qwstpad import QwSTPad # type: ignore
 from qwstpad import DEFAULT_ADDRESS as ADDRESS # type: ignore
-
+from math import floor
 
 from snake1d import Snake
 
@@ -13,6 +13,9 @@ NUM_LEDS = 300
 
 # How many times the LEDs will attempt to be updated per second. Note that this specifies the *delay* so this is just max fps
 FPS = 60
+
+#Maximum component brightness to limit current draw
+MAX_RGB = 200 
 
 #Controller setup
 i2c = I2C(id=0, scl=5, sda=4) 
@@ -26,11 +29,9 @@ except OSError:
 led_strip = plasma.WS2812(NUM_LEDS, 0, 0, plasma_stick.DAT, color_order=plasma.COLOR_ORDER_GRB)
 led_strip.start(FPS)
 
-
-
 pixels = [(0,0,0) for i in range(NUM_LEDS)]
 for i in range(NUM_LEDS):
-        led_strip.set_rgb(i,pixels[i][0],pixels[i][1],pixels[i][2])
+        led_strip.set_rgb(i,min(MAX_RGB,pixels[i][0]),min(MAX_RGB,pixels[i][1]),min(MAX_RGB,pixels[i][2]))
 position = 0
 playerRGB = (125,0,125)
 
@@ -44,7 +45,6 @@ while True:
         raise SystemExit
     
     new_pixels = game.draw(buttons,pixels)
-
     
     for i in range(len(new_pixels)): #only change updated pixels
         if new_pixels[i] != pixels[i]:
